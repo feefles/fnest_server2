@@ -1,13 +1,12 @@
 
 #include "./mmap.h"
+#include <Servo.h>
 
 using namespace std;
 
 /* assume /tmp mounted on /tmpfs -> all operation in memory */
 /* we can use just any file in tmpfs. assert(file size not modified && file permissions left readable) */
 mmap_Data* p_mmapData; // here our mmapped data will be accessed
-
-#include <Servo.h>
 
 
 // Tmperature measurement
@@ -32,6 +31,7 @@ Servo therm_servo;
 #define SERVO_FET_PIN  8
 #define SERVO_DISABLE_COUNTS  10
 char servo_disable_counter = 0;
+
 
 // Other state
 #define MAX_TEMP  80
@@ -78,7 +78,7 @@ void setup() {
   b_down_state = digitalRead(B_DOWN_PIN);  
   b_up_state = digitalRead(B_UP_PIN);
   
-  Serial.begin(115200);
+  //Serial.begin(115200);
 
 
 }
@@ -87,14 +87,14 @@ void loop() {
  
   
   if ((int)p_mmapData->set_temp != (int)temp_set) {
-    system("echo change set temp > /dev/ttyGS0");
+    //system("echo change set temp > /dev/ttyGS0");
     Serial.println((int)temp_set);
     temp_change_flag = 1;
     servo_disable_counter = 0;
     temp_set = p_mmapData->set_temp;
   }
   if (abs(p_mmapData->cur_temp - read_temp()) > .1) {
-    system("echo current temp change > /dev/ttyGS0");
+    //system("echo current temp change > /dev/ttyGS0");
     p_mmapData->cur_temp = read_temp();  
   }  
   
@@ -128,6 +128,7 @@ void loop() {
   delay(50);  
 }
 
+
 void set_temp(char temp) {
   digitalWrite(SERVO_FET_PIN, HIGH); 
   p_mmapData->set_temp = temp;
@@ -135,15 +136,20 @@ void set_temp(char temp) {
   Serial.println((int)temp);
 }
 
+
 float read_temp() {
   temp_meas_raw = analogRead(TEMP_PIN);
   temp_meas = BETA*(float)temp_meas + (1.-BETA)*((((500. * (temp_meas_raw-0)) / 1023.0) - 273.15) * (9./5.) + 32.);
   return temp_meas;
 }
+
+
+
 void debug(void) {
-  delay(1000);
+  //delay(1000);
 //  Serial.println(analogRead(TEMP_PIN));
 //  Serial.println(temp_meas, 1);
 //  Serial.println((int)temp_set);
-  Serial.println((int)p_mmapData->cur_temp);
+  //Serial.println((int)p_mmapData->cur_temp);
 }
+

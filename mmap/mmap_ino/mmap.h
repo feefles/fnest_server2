@@ -8,7 +8,7 @@
 
 /* assert(/tmp mounted to tmpfs, i.e. resides in RAM) */
 /* just use any file in /tmp */
-static const char* mmapFilePath = "/tmp/arduino";
+static const char* mmapFilePath = "/home/root/arduino";
 
 
 typedef struct mmapData_t {
